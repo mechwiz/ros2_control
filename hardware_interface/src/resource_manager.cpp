@@ -932,7 +932,8 @@ std::unordered_map<std::string, HardwareComponentInfo> ResourceManager::get_comp
 
 bool ResourceManager::prepare_command_mode_switch(
   const std::vector<std::string> & start_interfaces,
-  const std::vector<std::string> & stop_interfaces)
+  const std::vector<std::string> & stop_interfaces,
+  const std::vector<std::string> & command_data)
 {
   auto interfaces_to_string = [&]()
   {
@@ -954,7 +955,7 @@ bool ResourceManager::prepare_command_mode_switch(
 
   for (auto & component : resource_storage_->actuators_)
   {
-    if (return_type::OK != component.prepare_command_mode_switch(start_interfaces, stop_interfaces))
+    if (return_type::OK != component.prepare_command_mode_switch(start_interfaces, stop_interfaces, command_data))
     {
       RCUTILS_LOG_ERROR_NAMED(
         "resource_manager", "Component '%s' did not accept new command resource combination: \n %s",
@@ -964,7 +965,7 @@ bool ResourceManager::prepare_command_mode_switch(
   }
   for (auto & component : resource_storage_->systems_)
   {
-    if (return_type::OK != component.prepare_command_mode_switch(start_interfaces, stop_interfaces))
+    if (return_type::OK != component.prepare_command_mode_switch(start_interfaces, stop_interfaces, command_data))
     {
       RCUTILS_LOG_ERROR_NAMED(
         "resource_manager", "Component '%s' did not accept new command resource combination: \n %s",
@@ -977,11 +978,12 @@ bool ResourceManager::prepare_command_mode_switch(
 
 bool ResourceManager::perform_command_mode_switch(
   const std::vector<std::string> & start_interfaces,
-  const std::vector<std::string> & stop_interfaces)
+  const std::vector<std::string> & stop_interfaces,
+  const std::vector<std::string> & command_data)
 {
   for (auto & component : resource_storage_->actuators_)
   {
-    if (return_type::OK != component.perform_command_mode_switch(start_interfaces, stop_interfaces))
+    if (return_type::OK != component.perform_command_mode_switch(start_interfaces, stop_interfaces, command_data))
     {
       RCUTILS_LOG_ERROR_NAMED(
         "resource_manager", "Component '%s' could not perform switch",
@@ -991,7 +993,7 @@ bool ResourceManager::perform_command_mode_switch(
   }
   for (auto & component : resource_storage_->systems_)
   {
-    if (return_type::OK != component.perform_command_mode_switch(start_interfaces, stop_interfaces))
+    if (return_type::OK != component.perform_command_mode_switch(start_interfaces, stop_interfaces, command_data))
     {
       RCUTILS_LOG_ERROR_NAMED(
         "resource_manager", "Component '%s' could not perform switch",
